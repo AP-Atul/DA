@@ -10,6 +10,7 @@
 library(ggplot2)
 library(e1071)
 library(caret)
+library(ModelMetrics)
 options(warn = -1)
 
 # reading the dataset file
@@ -31,6 +32,10 @@ str(df)
 df[, 2:7][df[, 2:7] == 0] <- NA
 df <- na.omit(df)
 
+# checking NAs
+sum(is.na(df))
+colSums(is.na(df))
+
 # plotting data
 # Plot 1
 ggplot(df, aes(Age, colour = Outcome)) +
@@ -40,7 +45,7 @@ ggplot(df, aes(Age, colour = Outcome)) +
 # Plot 2
 ggplot(df, aes(x = Pregnancies, fill = Outcome, color = Outcome)) +
   geom_histogram(binwidth = 1) +
-  labs(title = "Pregnancy Distribution by Outcome")
+  labs(title = "Pregnancy Distribution by Outcome", xlab("Something"))
 
 # Plot 3
 ggplot(df, aes(x = BMI, fill = Outcome, color = Outcome)) +
@@ -80,6 +85,7 @@ y <- trainData$Outcome
 model <- train(x, y, 'nb', trainControl = trainControl(method = 'cv', number = 10))
 predict <- predict(model, newdata = testData)
 confusionMatrix(predict, testData$Outcome)
+rmse(actual = testData$Outcome, predicted = predict)
 
 # importance of each feature
 dataImp <- varImp(model)
